@@ -7,6 +7,12 @@ export async function GET(request: NextRequest) {
     const types = searchParams.get("type")?.split(",") || undefined;
     const regions = searchParams.get("region")?.split(",") || undefined;
     const search = searchParams.get("search") || undefined;
+    const launchedAfter = searchParams.get("launchedAfter") || undefined;
+    const sortBy = searchParams.get("sortBy") as
+      | "launch_desc"
+      | "launch_asc"
+      | "name"
+      | undefined;
     const page = parseInt(searchParams.get("page") || "1", 10);
     const pageSize = Math.min(
       parseInt(searchParams.get("pageSize") || "50", 10),
@@ -17,6 +23,8 @@ export async function GET(request: NextRequest) {
       types,
       regions,
       search,
+      launchedAfter,
+      sortBy,
       page,
       pageSize,
     });

@@ -158,6 +158,8 @@ export async function getFilteredObjects(params: {
   types?: string[];
   regions?: string[];
   search?: string;
+  launchedAfter?: string;
+  sortBy?: "launch_desc" | "launch_asc" | "name";
   page?: number;
   pageSize?: number;
 }): Promise<{ objects: OrbitalObject[]; total: number }> {
@@ -177,6 +179,13 @@ export async function getFilteredObjects(params: {
     );
   }
 
+  if (params.launchedAfter) {
+    const cutoff = params.launchedAfter;
+    filtered = filtered.filter(
+      (obj) => obj.launchDate && obj.launchDate >= cutoff
+    );
+  }
+
   if (params.search) {
     const query = params.search.toLowerCase();
     filtered = filtered.filter(
@@ -184,6 +193,17 @@ export async function getFilteredObjects(params: {
         obj.name.toLowerCase().includes(query) ||
         obj.catalogNumber.includes(query) ||
         (obj.intlDesignator?.toLowerCase().includes(query) ?? false)
+    );
+  }
+
+  // Sort
+  if (params.sortBy === "launch_desc") {
+    filtered.sort((a, b) =>
+      (b.launchDate || "").localeCompare(a.launchDate || "")
+    );
+  } else if (params.sortBy === "launch_asc") {
+    filtered.sort((a, b) =>
+      (a.launchDate || "").localeCompare(b.launchDate || "")
     );
   }
 
