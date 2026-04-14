@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getFilteredObjects } from "@/lib/data/celestrak";
+import { isAllowed } from "@/lib/rateLimit";
 
 export async function GET(request: NextRequest) {
+  // Rate limit: Max 60 requests per minute per IP for objects search
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  if (!isAllowed(ip, 60, 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const types = searchParams.get("type")?.split(",") || undefined;
