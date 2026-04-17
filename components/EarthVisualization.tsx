@@ -262,6 +262,16 @@ function OrbitalParticles({
           : (0.2 + seededRandom(seed + 5000) * 0.3) / radius;
 
         const color = new THREE.Color(TYPE_COLORS[type]);
+        // Debris particles are the densest bucket on the globe and the
+        // shader uses AdditiveBlending. When hundreds of them stack at
+        // screen center, the red channel of #e8713a saturates to 1.0
+        // while green/blue stay low — the cluster reads as bright red
+        // even though the flat CSS swatch on the category card shows
+        // orange. Pre-dim the per-particle color so stacked debris
+        // visually matches the #e8713a orange of the category row.
+        if (type === "debris") {
+          color.multiplyScalar(0.38);
+        }
         col[i * 3] = color.r;
         col[i * 3 + 1] = color.g;
         col[i * 3 + 2] = color.b;
