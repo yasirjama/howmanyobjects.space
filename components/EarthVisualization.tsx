@@ -290,7 +290,10 @@ function OrbitalParticles({
       uPixelRatio: { value: Math.min(gl.getPixelRatio(), 1.5) },
       uHighlightType: { value: -1 }, // -1 = none
       uHighlightRegion: { value: -1 },
-      uBaseSize: { value: 2.2 },
+      // Tuned so individual points stay around 2–6px at the camera's
+      // default distance. With 800 additive-blended particles, anything
+      // larger saturates the center to solid white (the "cloud" bug).
+      uBaseSize: { value: 0.22 },
     }),
     [gl]
   );
@@ -529,6 +532,7 @@ function OrbitalParticles({
 
             varying vec3 vColor;
             varying float vHighlight;
+            varying float vActiveHighlight;
 
             void main() {
               float angle = aStartAngle + uTime * aSpeed;
@@ -539,30 +543,42 @@ function OrbitalParticles({
               );
 
               // Highlight = 1 when matching filter, 0.25 when non-matching,
-              // 1 when no filter active (-1 sentinel)
+              // 1 when no filter active (-1 sentinel).
               float matchType   = (uHighlightType   < 0.0) ? 1.0 : step(abs(aTypeId   - uHighlightType),   0.5);
               float matchRegion = (uHighlightRegion < 0.0) ? 1.0 : step(abs(aRegionId - uHighlightRegion), 0.5);
               vHighlight = matchType * matchRegion;
               float dim = mix(0.18, 1.0, vHighlight);
 
+              // Only emit glow in the fragment shader when the user has
+              // an active filter AND this particle matches it; otherwise
+              // every particle would halo and the additive blend blooms.
+              float filterActive = step(0.0, max(uHighlightType, uHighlightRegion));
+              vActiveHighlight = vHighlight * filterActive;
+
               vColor = aColor * dim;
 
               vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
               gl_Position = projectionMatrix * mvPosition;
+              // Perspective divisor kept small (was 260 → blooming
+              // "cloud" bug); 90 gives ~4–8px points across the scene.
               gl_PointSize = aSize * uBaseSize * uPixelRatio *
                              (1.0 + 0.4 * vHighlight) *
-                             (260.0 / -mvPosition.z);
+                             (90.0 / -mvPosition.z);
             }
           `}
           fragmentShader={`
             varying vec3 vColor;
             varying float vHighlight;
+            varying float vActiveHighlight;
             void main() {
               vec2 uv = gl_PointCoord - 0.5;
               float d = length(uv);
-              // Soft circle with faint outer glow for highlighted particles
-              float core = smoothstep(0.5, 0.25, d);
-              float glow = smoothstep(0.5, 0.0, d) * 0.35 * vHighlight;
+              // Tight soft disk — no baseline glow (caused the cloud
+              // bug when multiplied across 800 additive points).
+              float core = smoothstep(0.5, 0.15, d);
+              // Halo only when the user has filtered AND this particle
+              // matches the filter.
+              float glow = smoothstep(0.5, 0.0, d) * 0.3 * vActiveHighlight;
               float alpha = clamp(core + glow, 0.0, 1.0);
               if (alpha < 0.02) discard;
               gl_FragColor = vec4(vColor, alpha);
