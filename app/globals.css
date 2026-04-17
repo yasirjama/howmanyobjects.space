@@ -192,7 +192,9 @@ img {
   position: relative;
   z-index: var(--z-above);
   max-width: 900px;
-  pointer-events: auto;
+  /* Decorative text only (aria-hidden children). Let pointer events pass
+     through to the particle canvas beneath so hover/click reach the globe. */
+  pointer-events: none;
 }
 
 .hero__label {
@@ -225,6 +227,8 @@ img {
 
 .hero__timestamp {
   margin-top: var(--space-8);
+  /* Non-interactive visual badge — don't block canvas pointer events. */
+  pointer-events: none;
 }
 
 .hero__scroll-hint {
@@ -233,6 +237,8 @@ img {
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-above);
+  /* Decorative hint; don't block canvas hit-testing. */
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   align-items: center;
