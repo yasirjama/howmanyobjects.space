@@ -477,25 +477,6 @@ function OrbitalParticles({
 
   return (
     <group>
-      {/* Transparent picker plane captures pointer events for the whole scene.
-         Rendered with opacity 0 + depthWrite off so it's invisible but
-         still dispatches R3F pointer events (unlike visible={false}). */}
-      <mesh
-        position={[0, 0, 0]}
-        onPointerMove={handlePointerMove as unknown as (e: unknown) => void}
-        onPointerLeave={handlePointerLeave as unknown as (e: unknown) => void}
-        onPointerOut={handlePointerLeave as unknown as (e: unknown) => void}
-        onClick={handleClick as unknown as (e: unknown) => void}
-      >
-        <planeGeometry args={[50, 50]} />
-        <meshBasicMaterial
-          transparent
-          opacity={0}
-          depthWrite={false}
-          colorWrite={false}
-        />
-      </mesh>
-
       <points>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
