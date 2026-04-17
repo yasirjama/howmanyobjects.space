@@ -19,7 +19,9 @@
   --accent-active: #4da6ff;
   --accent-inactive: #6b7280;
   --accent-rocket: #9ca3af;
-  --accent-debris: #e8713a;
+  /* Brighter coral-red so the flat CSS fill visually matches the
+     additively-blended debris particles in the 3D hero. */
+  --accent-debris: #ff5a3a;
   --accent-unknown: #4b5563;
 
   --accent-leo: #4da6ff;
@@ -180,7 +182,10 @@ img {
   position: absolute;
   inset: 0;
   z-index: var(--z-base);
-  pointer-events: none;
+  /* pointer-events: auto so the particle picker can receive hover and
+     click events. .hero__content sits above this at a higher z-index
+     with pointer-events: auto, so overlaid text/buttons still work. */
+  pointer-events: auto;
 }
 
 .hero__content {
@@ -669,7 +674,7 @@ img {
 .object-row__type--active_satellite { background: rgba(77, 166, 255, 0.15); color: var(--accent-active); }
 .object-row__type--inactive_satellite { background: rgba(107, 114, 128, 0.2); color: var(--accent-inactive); }
 .object-row__type--rocket_body { background: rgba(156, 163, 175, 0.15); color: var(--accent-rocket); }
-.object-row__type--debris { background: rgba(232, 113, 58, 0.15); color: var(--accent-debris); }
+.object-row__type--debris { background: rgba(255, 90, 58, 0.15); color: var(--accent-debris); }
 .object-row__type--unknown { background: rgba(75, 85, 99, 0.2); color: var(--accent-unknown); }
 
 .object-row__region {
