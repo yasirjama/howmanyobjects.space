@@ -11,7 +11,7 @@ export const TYPE_COLORS = {
   active_satellite: "#4da6ff",
   inactive_satellite: "#6b7280",
   rocket_body: "#9ca3af",
-  debris: "#ff5a3a",
+  debris: "#f97316",
   unknown: "#4b5563",
 } as const;
 

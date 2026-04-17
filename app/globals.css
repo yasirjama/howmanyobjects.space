@@ -19,10 +19,9 @@
   --accent-active: #4da6ff;
   --accent-inactive: #6b7280;
   --accent-rocket: #9ca3af;
-  /* Matches TYPE_COLORS.debris in lib/constants.ts — single source of
-     truth shared by the globe particles, category card border, bar
-     fill, filter chip, and object-row tag. */
-  --accent-debris: #e8713a;
+  /* Debris is a pure vivid orange. We use this specifically for the
+     additively-blended debris particles in the 3D hero. */
+  --accent-debris: #f97316;
   --accent-unknown: #4b5563;
 
   --accent-leo: #4da6ff;
@@ -681,7 +680,7 @@ img {
 .object-row__type--active_satellite { background: rgba(77, 166, 255, 0.15); color: var(--accent-active); }
 .object-row__type--inactive_satellite { background: rgba(107, 114, 128, 0.2); color: var(--accent-inactive); }
 .object-row__type--rocket_body { background: rgba(156, 163, 175, 0.15); color: var(--accent-rocket); }
-.object-row__type--debris { background: rgba(232, 113, 58, 0.15); color: var(--accent-debris); }
+.object-row__type--debris { background: rgba(249, 115, 22, 0.15); color: var(--accent-debris); }
 .object-row__type--unknown { background: rgba(75, 85, 99, 0.2); color: var(--accent-unknown); }
 
 .object-row__region {
